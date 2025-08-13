@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Books.com Showcase</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+  }
+
+  /* Hero Section */
+  .hero {
+    height: 100vh;
+    background: url('res/hero-bg.jpg') center/cover no-repeat;
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero h1 {
+    font-size: 3em;
+    margin: 0.3em 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    margin-top: 15vh;
+  }
+  .hero p {
+    font-size: 1.3em;
+    max-width: 600px;
+    margin-bottom: 1.5em;
+  }
+  .hero button {
+    background: #ffb400;
+    color: #333;
+    padding: 0.8rem 1.6rem;
+    border: none;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  /* Down Arrow */
+  .scroll-down {
+    position: absolute;
+    bottom: 1.5em;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5rem;
+    animation: bounce 1.5s infinite;
+    color: white;
+    cursor: pointer;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, -10px); }
+  }
+
+  /* Showcase Wrapper */
+  .showcase-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Showcase Section */
+  .showcase {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 50px;
+    background: white;
+    text-align: center;
+  }
+
+  /* Carousel Container */
+  .carousel-container {
+    position: relative;
+    max-width: 100%;
+    margin: 0 auto;
+    background: white;
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+  }
+
+  /* Carousel Track */
+  .carousel-track {
+    display: flex;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Hide scrollbar */
+  .carousel-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Book Item */
+  .book {
+    flex: 0 0 auto;
+    width: 220px; /* fixed width */
+    margin: 2px 10px;
+    scroll-snap-align: start;
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .book img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  .book-title {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+  /* Carousel Buttons */
+  .carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 50%;
+    z-index: 10;
+  }
+  .carousel-btn.prev { left: 10px; }
+  .carousel-btn.next { right: 10px; }
+
+  /* Dots Navigation */
+  .dots {
+    text-align: center;
+    padding: 1rem 0;
+  }
+  .dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin: 0 6px;
+    background: #bbb;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .dot.active {
+    background: #ff6600;
+  }
+
+  /* Footer */
+  footer {
+    background: #2b4b70;
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<header class="hero">
+  <h1>מכון אור נפתלי</h1>
+  <p>Have your Sefer typed up in 10 days, at your doorstep in 17, do it the cheapest way with מכון אור נפתלי!</br>They will charge you $850 - we will charge you $50</br>They will have it done in a couple of months - we will have it done in 20 days.</br></br>Why bother with all the headaches, just take 1 headache and be over with it</p>
+  <button onclick="window.open('https://forms.gle/roJco3KGnRB55QyB7', '_blank')">Apply Now</button>
+  <div class="scroll-down">&#x25BC;</div>
+</header>
+
+<div class="showcase-wrapper">
+  <!-- Showcase -->
+  <section class="showcase" id="showcase">
+    <h2>Previous Works</h2>
+    <div class="carousel-container">
+      <button class="carousel-btn prev" id="prevBtn">&#10094;</button>
+      <div class="carousel-track" id="carouselTrack"></div>
+      <button class="carousel-btn next" id="nextBtn">&#10095;</button>
+    </div>
+    <div class="dots" id="dotsContainer"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <h3>About Us</h3>
+    <p>We specialize in turning your raw notes into polished, bound books — for personal use, study, or sharing.</p>
+    <h3>Contact</h3>
+    <p>Email: order@books.com</p>
+  </footer>
+</div>
+
+<!-- Embedded Showcase JSON -->
+<script id="showcaseData" type="application/json">
+[
+  { "title": "Biology Class Notes – 2024", "img": "res/showcase/book1.jpg" },
+  { "title": "History Lecture Compendium", "img": "res/showcase/book2.jpg" },
+  { "title": "Biology Class Notes – 2024", "img": "res/showcase/book1.jpg" },
+  { "title": "History Lecture Compendium", "img": "res/showcase/book3.jpg" },
+  { "title": "Biology Class Notes – 2024", "img": "res/showcase/book1.jpg" },
+  { "title": "History Lecture Compendium", "img": "res/showcase/book4.jpg" },
+  { "title": "History Physics Compendium", "img": "res/showcase/book2.jpg" },
+  { "title": "History Lecture Compendium", "img": "res/showcase/book4.jpg" },
+  { "title": "Advanced Physics Workbook", "img": "res/showcase/book3.jpg" }
+]
+</script>
+
+<script>
+  const showcaseData = JSON.parse(document.getElementById('showcaseData').textContent);
+  const slideWidth = 220;
+
+  const track = document.getElementById('carouselTrack');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const dotsContainer = document.getElementById('dotsContainer');
+  const books = showcaseData;
+
+  let visibleCount = 1;
+  let currentIndex = 0;
+
+  document.querySelector('.scroll-down').addEventListener('click', () => {
+    const showcaseSection = document.getElementById('showcase');
+    if (showcaseSection) {
+      showcaseSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  // Build carousel items
+  showcaseData.forEach(book => {
+    const div = document.createElement('div');
+    div.className = 'book';
+    div.style.minWidth = slideWidth + 'px';
+    div.innerHTML = `
+      <img src="${book.img}" alt="${book.title}">
+      <div class="book-title">${book.title}</div>
+    `;
+    track.appendChild(div);
+  });
+
+  function updateVisibleCount() {
+    visibleCount = Math.floor(track.parentElement.offsetWidth / slideWidth);
+    if (visibleCount < 1) visibleCount = 1;
+  }
+  updateVisibleCount();
+  window.addEventListener('resize', () => {
+    updateVisibleCount();
+    goToSlide(currentIndex);
+    createDots();
+  });
+
+  function createDots() {
+    dotsContainer.innerHTML = '';
+    const pageCount = Math.ceil(books.length / visibleCount);
+    for (let i = 0; i < pageCount; i++) {
+      const dot = document.createElement('span');
+      dot.className = 'dot' + (i === currentIndex ? ' active' : '');
+      dot.addEventListener('click', () => {
+        goToSlide(i);
+        resetAutoSlide();
+      });
+      dotsContainer.appendChild(dot);
+    }
+  }
+  createDots();
+
+  function goToSlide(index) {
+    const maxIndex = Math.ceil(books.length / visibleCount) - 1;
+    currentIndex = Math.min(Math.max(index, 0), maxIndex);
+
+    const targetItemIndex = currentIndex * visibleCount;
+    const targetItem = track.children[targetItemIndex];
+    if (targetItem) {
+      track.scrollTo({
+        left: targetItem.offsetLeft - track.offsetLeft,
+        behavior: 'smooth'
+      });
+    }
+    updateDots();
+  }
+
+  function updateDots() {
+    const dots = dotsContainer.querySelectorAll('.dot');
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentIndex);
+    });
+  }
+
+  prevBtn.addEventListener('click', () => {
+    goToSlide(currentIndex - 1);
+    resetAutoSlide();
+  });
+  nextBtn.addEventListener('click', () => {
+    goToSlide(currentIndex + 1);
+    resetAutoSlide();
+  });
+
+  let autoSlideInterval = setInterval(() => {
+    let maxIndex = Math.ceil(books.length / visibleCount) - 1;
+    let nextIndex = currentIndex + 1 > maxIndex ? 0 : currentIndex + 1;
+    goToSlide(nextIndex);
+  }, 5000);
+
+  function resetAutoSlide() {
+    clearInterval(autoSlideInterval);
+    autoSlideInterval = setInterval(() => {
+      let maxIndex = Math.ceil(books.length / visibleCount) - 1;
+      let nextIndex = currentIndex + 1 > maxIndex ? 0 : currentIndex + 1;
+      goToSlide(nextIndex);
+    }, 5000);
+  }
+
+  goToSlide(0);
+</script>
+
+</body>
+</html>

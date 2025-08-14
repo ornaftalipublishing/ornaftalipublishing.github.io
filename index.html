@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>מכון אור נפתלי</title>
+<link rel="icon" type="image/png" sizes="32x32" href="res/favicon-32x32.png">
 <style>
   body {
     margin: 0;
@@ -13,8 +14,9 @@
 
   /* Hero Section */
   .hero {
-    height: 100vh;
-    background: url('res/hero-bg.jpg') center/cover no-repeat;
+	height: calc(100vh - 2em);
+	padding: 1em;
+    background: url('res/hero-bg2.png') center/cover no-repeat;
     color: white;
     text-align: center;
     display: flex;
@@ -25,12 +27,13 @@
     font-size: 3em;
     margin: 0.3em 0;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
-    margin-top: 15vh;
+    margin-top: clamp(0px, 10vw - 1em, 15vh - 1em);
   }
   .hero p {
-    font-size: 1.3em;
-    max-width: 80vw;
-    margin-bottom: 1.5em;
+    font-size: clamp(12px, 5vw, 1.3em);
+    max-width: 600px;
+    margin: 1em 0.5em 1.5em;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
   }
   .hero button {
     background: #ffb400;
@@ -156,17 +159,275 @@
     transition: background 0.3s;
   }
   .dot.active {
-    background: #ff6600;
+    background: #ffb400;
   }
 
-  /* Footer */
   footer {
-    background: #2b4b70;
+    background: #8b8882;
     color: white;
     padding: 2rem;
-    text-align: center;
     flex-shrink: 0;
+    /* height: 100%; */
+}
+
+footer .footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; /* allow wrapping on small screens */
+    gap: 1rem; /* spacing between elements */
+    /* height: 100%; */
+}
+
+footer img {
+    max-height: 150px; /* adjust as needed */
+    height: auto;
+    width: auto;
+}
+
+footer img.left {
+    order: 1; /* optional: keep QR code first */
+}
+
+footer .footer-text {
+    text-align: center;
+    max-width: 400px; /* keeps text readable on wide screens */
+    /* padding: 0 10em; */
+    order: 2;
+    /* flex: 1 1 300px; */ /* allows it to shrink/grow responsively */
+}
+
+footer img.right {
+    order: 3; /* logo last */
+}
+
+/* Small screens */
+@media (max-width: 810px) {
+    footer .footer-content {
+        flex-direction: column;
+    }
+    footer img.left{
+        order: 3;
+        }
+    footer img.right {
+    /* margin-top: 22em; */
+    /* order: 2; */
+    }
+}
+</style>
+
+<style>
+.carousel-container {
+  position: relative;
+  /*overflow: hidden;8*/
+  margin: 2rem 0;
+  padding: 0 50px;
+}
+.carousel-track {
+  display: flex;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  gap: 10px;
+	scroll-padding-left: 8px;
+	scroll-padding-right: 8px;
+}
+.book {
+  flex: 0 0 auto;
+  width: calc(100% - 29px);
+  max-width: 220px;
+  scroll-snap-align: start;
+  background: #fafafa;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+.book img {
+  width: 100%;
+  height: auto;
+  max-height: 300px;  
+  object-fit: cover;
+  border-radius: 5px;
+}
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 50%;
+  z-index: 10;
+}
+.carousel-btn.prev { left: -40px; }
+.carousel-btn.next { right: -40px; }
+.carousel-btn:disabled { opacity: 0.3; cursor: default; }
+
+.dots {
+  text-align: center;
+  padding: 1rem 0;
+}
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 0 6px;
+  background: #bbb;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.dot.active { background: #ff6600; }
+
+/* Popup */
+.popup {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+.popup.active { display:flex; }
+.popup-content {
+  background:white;
+  padding:20px;
+  border-radius:8px;
+  width:90%;
+  max-width:500px;
+  position:relative;
+}
+.popup-close {
+  position:absolute; top:10px; right:10px;
+  background:transparent; border:none;
+  font-size:24px; cursor:pointer;
+}
+</style>
+<style>
+/* Base popup styles */
+.popup {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+.popup.active {
+  display: flex;
+}
+.popup-content {
+  background: white;
+  max-width: 900px;
+  width: 90%;
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  position: relative;
+  border-radius: 8px;
+}
+
+/* Close button */
+.popup-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 1rem;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+/* Left section with images */
+.popup-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.popup-left img {
+  max-width: 100%;
+  height: auto;
+  box-shadow: 0 0px 3px 2px rgba(0, 0, 0, 0.2);
+}
+.popup-thumbs {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;  
+  width: 100%;
+  justify-content: center;
+}
+.popup-thumbs img {
+  width: 70px;
+  height: auto;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.popup-thumbs img.active {
+  border-color: #333;
+}
+
+/* Right section with info */
+.popup-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: clamp(14px, 1vw, 1.5em);
+}
+#popupTitle {
+    text-align: center;
+    margin-bottom: 0;
+}
+#popupAuthor {
+    font-style: italic;
+    text-align: center;
+    margin-top: 0.5em;
+}
+#popupDesc {
+    padding-top: 3em;
+}
+#popupOrder {
+  padding: 0.5rem 1rem;
+  background: #ffb400;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: auto;
+  font-size: inherit;
+}
+#popupOrder:hover {
+  background: #FFD100;
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* Mobile layout */
+@media (max-width: 810px) {
+  .popup-content {
+    flex-direction: column;
+    width: calc(100% - 6rem);
+    height: calc(100% - 6rem);
   }
+  .popup-left{
+	width: 100%;
+	flex: none;
+  }  
+  .popup-right {
+    width: 100%;
+  }
+	#popupDesc {
+		padding-top: 0em;
+	}
+#popupMainImg {
+    max-height: 25vh;
+}
+}
 </style>
 </head>
 <body>
@@ -174,7 +435,7 @@
 <!-- Hero -->
 <header class="hero">
   <h1>מכון אור נפתלי</h1>
-  <p>Have your Sefer typed up in 10 days, at your doorstep in 17, do it the cheapest way with מכון אור נפתלי!</br>They will charge you $850 - we will charge you $50.</br>They will have it done in a couple of months - we will have it done in 20 days.</br></br>Why bother with all the headaches?</br>Just take 1 headache and be over with it!</p>
+  <p>Have your Sefer typed up in 10 days, at your doorstep in 17, do it the cheapest way with מכון אור נפתלי!</br>They will charge you $850 - we will charge you $50</br>They will have it done in a couple of months - we will have it done in 20 days.</br></br>Why bother with all the headaches, just take 1 headache and be over with it</p>
   <button onclick="window.open('https://forms.gle/roJco3KGnRB55QyB7', '_blank')">Apply Now</button>
   <div class="scroll-down">&#x25BC;</div>
 </header>
@@ -182,146 +443,345 @@
 <div class="showcase-wrapper">
   <!-- Showcase -->
   <section class="showcase" id="showcase">
-    <h2>Previous Works</h2>
-    <div class="carousel-container">
-      <button class="carousel-btn prev" id="prevBtn">&#10094;</button>
-      <div class="carousel-track" id="carouselTrack"></div>
-      <button class="carousel-btn next" id="nextBtn">&#10095;</button>
+	  <h2>Previous Works</h2>
+	  <div class="carousel-container">
+		<button class="carousel-btn prev" id="prevBtn">&#10094;</button>
+		<div class="carousel-track" id="carouselTrack"></div>
+		<button class="carousel-btn next" id="nextBtn">&#10095;</button>
+	  </div>
+	  <div class="dots" id="dotsContainer"></div>
+	</section>
+	
+<!-- Popup -->
+<div id="bookPopup" class="popup">
+  <div class="popup-content">
+    <span class="popup-close">&times;</span>
+    <div class="popup-left">
+      <img id="popupMainImg" src="" alt="Book Image">
+      <div class="popup-thumbs">
+        <img id="thumb1" src="" alt="Thumb 1">
+        <img id="thumb2" src="" alt="Thumb 2">
+        <img id="thumb3" src="" alt="Thumb 3">
+      </div>
     </div>
-    <div class="dots" id="dotsContainer"></div>
-  </section>
+    <div class="popup-right">
+      <h2 id="popupTitle"></h2>
+      <p id="popupAuthor"></p>
+      <p id="popupDesc"></p>
+      <button id="popupOrder">Order Now</button>
+    </div>
+  </div>
+</div>
 
   <!-- Footer -->
   <footer>
-    <h3>About Us</h3>
-    <p>We type and print your Sefer fast, cheap, and hassle-free - typed in 10 days, at your door in 17, for as low as $50.</p>
-    <h3>Contact</h3>
-    <p>Email: ornaftalipublishing@gmail.com</p>
-  </footer>
+  <div class="footer-content">
+    <img class="left" src="res/qrcode.png" alt="QR Code">
+    <div class="footer-text">
+      <h3>About Us</h3>
+      <p>We type and print your Sefer fast, cheap, and hassle-free - typed in 10 days, at your door in 17.</p>
+      <h3>Contact</h3>
+      <p>Email: ornaftalipublishing@gmail.com</p>
+    </div>
+    <img class="right" src="res/logo_clear.png" alt="Logo">
+  </div>
+</footer>
 </div>
+
 
 <!-- Embedded Showcase JSON -->
 <script id="showcaseData" type="application/json">
 [
-  { "title": "Biology Class Notes – 2024", "img": "res/showcase/book1.jpg" },
-  { "title": "History Lecture Compendium", "img": "res/showcase/book2.jpg" },
-  { "title": "Biology Class Notes – 2024", "img": "res/showcase/book1.jpg" },
-  { "title": "History Lecture Compendium", "img": "res/showcase/book3.jpg" },
-  { "title": "Biology Class Notes – 2024", "img": "res/showcase/book1.jpg" },
-  { "title": "History Lecture Compendium", "img": "res/showcase/book4.jpg" },
-  { "title": "History Physics Compendium", "img": "res/showcase/book2.jpg" },
-  { "title": "History Lecture Compendium", "img": "res/showcase/book4.jpg" },
-  { "title": "Advanced Physics Workbook", "img": "res/showcase/book3.jpg" }
+  { "title": "תולדות יעקב יוסף"},
+  { "title": "שיעור כללי מאת ר׳ יוסף אייכנשטיין"},
+  { "title": "ספר ר׳ פלוני vol. 1", "image2":"anothername.jpg"},
+  { "title": "ספר ר׳ פלוני vol. 2", "author":"ר׳ פלוני", "description":"From someone everybody knows, a very nice sefer!"},
+  { "title": "ספר ר׳ פלוני vol. 3", "author":"ר׳ פלוני", "comming soon":true},
+  { "title": "ספר ר׳ פלוני vol. 4"},
+  { "title": "ספר ר׳ פלוני vol. 5"},
+  { "title": "ספר ר׳ פלוני vol. 6"},
+  { "title": "ספר ר׳ פלוני vol. 7"}
 ]
 </script>
 
 <script>
-  const showcaseData = JSON.parse(document.getElementById('showcaseData').textContent);
-  const slideWidth = 220;
+// Constants
+const showcaseData = JSON.parse(document.getElementById('showcaseData').textContent);
 
-  const track = document.getElementById('carouselTrack');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const dotsContainer = document.getElementById('dotsContainer');
-  const books = showcaseData;
+// CSS
+const cardGap = 10;
 
-  let visibleCount = 1;
-  let currentIndex = 0;
+const track = document.getElementById('carouselTrack');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const dotsContainer = document.getElementById('dotsContainer');
 
-  document.querySelector('.scroll-down').addEventListener('click', () => {
-    const showcaseSection = document.getElementById('showcase');
-    if (showcaseSection) {
-      showcaseSection.scrollIntoView({ behavior: 'smooth' });
+let tileWidth = () => document.querySelector("div.book").offsetWidth + 20 + 20;
+let visibleCount = 0; //Math.floor(track.offsetWidth / tileWidth());
+let currentIndex = 0;
+
+// Load Data
+showcaseData.forEach(book => {
+	const div = document.createElement('div');
+	div.className = 'book';
+	//div.style.minWidth = tileWidth + 'px';
+
+	const img = document.createElement('img');
+	img.alt = book.title;
+	img.draggable = false;
+
+	// Encode title so spaces/Unicode work in the URL
+	const folder = encodeURIComponent(book.title.trim());
+	const primarySrc = `res/showcase/${folder}/cover.png`;
+	const fallbackSrc = `res/showcase/default/cover.png`;
+
+	let fallbackUsed = false;
+	
+	img.addEventListener('error', function() {
+		if (!fallbackUsed) {
+			fallbackUsed = true;
+			console.warn("Image missing, using fallback for", img.alt);
+			img.src = fallbackSrc; // change to fallback
+		}
+	});
+	
+	img.src = primarySrc;
+
+	const titleDiv = document.createElement('div');
+	titleDiv.className = 'book-title';
+	titleDiv.textContent = book.title;
+
+	div.appendChild(img);
+	div.appendChild(titleDiv);
+
+	// Popup on click
+	div.addEventListener('click', () => {
+		openBookPopup(book);
+	});
+
+	track.appendChild(div);
+});
+
+// Popup
+function checkImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(src);       // valid image
+    img.onerror = () => resolve(null);     // failed, return null
+    img.src = src;
+  });
+}
+
+async function getBookImages(book) {
+  const defaultCover = 'res/showcase/default/cover.png';
+  const defaultComingSoon = 'res/showcase/default/coming_soon.png';
+
+  const coverSrc = book.comingsoon
+    ? defaultComingSoon
+    : (book.image1 || `res/showcase/${book.title}/cover.png`);
+  const contentsSrc = book.image2 ? `res/showcase/${book.title}/${book.image2}` : `res/showcase/${book.title}/contents.png`;
+  const contentSrc = book.image3 ? `res/showcase/${book.title}/${book.image3}` : `res/showcase/${book.title}/content.png`;
+
+  const cover = await checkImage(coverSrc) || defaultCover;
+  const contents = await checkImage(contentsSrc);
+  const content = await checkImage(contentSrc);
+
+  return [cover, contents, content].filter(Boolean); // remove nulls
+}
+
+/*function getBookImages(book) {
+  const defaultCover = 'res/showcase/default/cover.png';
+  const defaultComingSoon = 'res/showcase/default/coming_soon.png';
+
+  // Cover (always present)
+  const cover = book.comingsoon
+    ? defaultComingSoon
+    : (book.image1 || `res/showcase/${book.title}/cover.png`);
+
+  // Contents (optional)  
+  const contents = book.image2 ? `res/showcase/${book.title}/${book.image2}` : `res/showcase/${book.title}/contents.png`;
+  const content = book.image3 ? `res/showcase/${book.title}/${book.image3}` : `res/showcase/${book.title}/content.png`;
+
+  // Return all three, later code handles errors/display
+  return [cover, contents, content];
+}*/
+function openBookPopup(book) {
+  const popup = document.getElementById('bookPopup');
+  const mainImg = document.getElementById('popupMainImg');
+  const thumbs = [
+    document.getElementById('thumb1'),
+    document.getElementById('thumb2'),
+    document.getElementById('thumb3')
+  ];
+
+  // Fallback cover
+  const defaultCover = 'res/showcase/default/cover.png';
+  const defaultComingSoon = 'res/showcase/default/coming_soon.png';
+
+  // Fill in data
+  document.getElementById('popupTitle').textContent = book.title || "";
+  document.getElementById('popupAuthor').textContent = book.author || "";
+  document.getElementById('popupDesc').textContent = book.description || "";
+
+  // Image sources
+  //let images = getBookImages(book);  
+  (async () => {
+	  const images = await getBookImages(book);
+	  
+	if(images[0]) {} else {images[0] = defaultCover;}
+
+  // Set main image to first
+  mainImg.src = images[0];  
+
+let maxWidth = 0;
+let maxHeight = 0;
+let loadedCount = 0;
+	
+  // Set thumbs
+  thumbs.forEach((thumb, i) => {
+  
+    if (images[i]) {
+      thumb.src = images[i];
+	  
+	  maxWidth = Math.max(maxWidth, thumb.naturalWidth);
+	  maxHeight = Math.max(maxHeight, thumb.naturalHeight);
+	  loadedCount++;
+	  if (loadedCount === images.length) {
+		// All images loaded, set container size to largest
+		//mainImg.style.width = maxWidth + 'px';
+		//mainImg.style.height = maxHeight + 'px';
+		let aspectRatio = maxWidth / maxHeight;
+		mainImg.style.aspectRatio = aspectRatio;
+		mainImg.addEventListener('load', () => {		  
+			mainImg.style.height = mainImg.height + 'px';
+		});
+	  }
+	  
+      thumb.style.display = 'block';
+      thumb.classList.toggle('active', i === 0);
+      thumb.onclick = () => {
+        mainImg.src = images[i];
+        thumbs.forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+      };
+	  
+    } else {
+      thumb.style.display = 'none';
     }
   });
 
-  // Build carousel items
-  showcaseData.forEach(book => {
-    const div = document.createElement('div');
-    div.className = 'book';
-    div.style.minWidth = slideWidth + 'px';
-    div.innerHTML = `
-      <img src="${book.img}" alt="${book.title}">
-      <div class="book-title">${book.title}</div>
-    `;
-    track.appendChild(div);
-  });
+  popup.classList.add('active');
+  document.body.classList.add('no-scroll');
+  
+})();
+}
 
-  function updateVisibleCount() {
-    visibleCount = Math.floor(track.parentElement.offsetWidth / slideWidth);
-    if (visibleCount < 1) visibleCount = 1;
+// Close handlers
+document.querySelector('.popup-close').addEventListener('click', () => {
+	document.body.classList.remove('no-scroll');
+  document.getElementById('bookPopup').classList.remove('active');
+});
+
+document.getElementById('bookPopup').addEventListener('click', (e) => {
+  if (e.target.id === 'bookPopup') {  
+	document.body.classList.remove('no-scroll');
+    document.getElementById('bookPopup').classList.remove('active');
   }
-  updateVisibleCount();
-  window.addEventListener('resize', () => {
-    updateVisibleCount();
-    goToSlide(currentIndex);
-    createDots();
-  });
+}); 
 
-  function createDots() {
+// Carousel
+function goToPage(pageIndex){
+    const maxPageIndex = Math.ceil(showcaseData.length / visibleCount) - 1;
+    pageIndex = Math.min(Math.max(pageIndex, 0), maxPageIndex);
+    currentIndex = pageIndex * visibleCount;
+
+    track.scrollTo({
+        left: pageIndex * tileWidth() * visibleCount,
+        behavior: 'smooth'
+    });
+
+    updateDots();
+    prevBtn.disabled = pageIndex === 0;
+    nextBtn.disabled = pageIndex >= maxPageIndex;
+}
+
+function calculateVisibleCount() {
+	visibleCount = Math.floor(track.offsetWidth / tileWidth());
+	if (visibleCount < 1) visibleCount = 1;
+}
+
+function updateCarousel() {
+  const target = track.children[currentIndex];
+  if(target){
+    track.scrollTo({ left: target.offsetLeft - (track.offsetWidth - target.offsetWidth)/2,
+    behavior: 'smooth' });
+	
+  }
+  updateDots();
+  prevBtn.disabled = currentIndex === 0;
+  nextBtn.disabled = currentIndex >= showcaseData.length - visibleCount;
+}
+
+// Dots
+function createDots() {
     dotsContainer.innerHTML = '';
     const pageCount = Math.ceil(books.length / visibleCount);
     for (let i = 0; i < pageCount; i++) {
       const dot = document.createElement('span');
       dot.className = 'dot' + (i === currentIndex ? ' active' : '');
       dot.addEventListener('click', () => {
-        goToSlide(i);
-        resetAutoSlide();
+        goToPage(i);
       });
       dotsContainer.appendChild(dot);
     }
   }
-  createDots();
+  
+function updateDots() {
+  dotsContainer.innerHTML = '';
+  const pageCount = Math.ceil(showcaseData.length / visibleCount);
+  for(let i=0;i<pageCount;i++){
+    const dot = document.createElement('span');
+    dot.className = 'dot'+(i===Math.floor(currentIndex/visibleCount)?' active':'');
+    dot.addEventListener('click', ()=>{ currentIndex = i*visibleCount; updateCarousel(); });
+    dotsContainer.appendChild(dot);
+  }
+}
 
-  function goToSlide(index) {
-    const maxIndex = Math.ceil(books.length / visibleCount) - 1;
-    currentIndex = Math.min(Math.max(index, 0), maxIndex);
+// Scroll Down
+document.querySelector('.scroll-down').addEventListener('click', () => {
+	const showcaseSection = document.getElementById('showcase');
+	if (showcaseSection) {
+		showcaseSection.scrollIntoView({ behavior: 'smooth' });
+	}
+});
 
-    const targetItemIndex = currentIndex * visibleCount;
-    const targetItem = track.children[targetItemIndex];
-    if (targetItem) {
-      track.scrollTo({
-        left: targetItem.offsetLeft - track.offsetLeft,
-        behavior: 'smooth'
-      });
-    }
+// Listeners
+window.addEventListener('resize', () => {
+    calculateVisibleCount();
+    goToPage(currentIndex);
     updateDots();
-  }
+});
+  
+prevBtn.addEventListener('click', () => {
+	const page = Math.floor(currentIndex / visibleCount) - 1;
+	goToPage(page); 
+});
 
-  function updateDots() {
-    const dots = dotsContainer.querySelectorAll('.dot');
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('active', i === currentIndex);
-    });
-  }
+nextBtn.addEventListener('click', () => {
+	const page = Math.floor(currentIndex / visibleCount) + 1;
+	goToPage(page); 
+});
 
-  prevBtn.addEventListener('click', () => {
-    goToSlide(currentIndex - 1);
-    resetAutoSlide();
-  });
-  nextBtn.addEventListener('click', () => {
-    goToSlide(currentIndex + 1);
-    resetAutoSlide();
-  });
-
-  let autoSlideInterval = setInterval(() => {
-    let maxIndex = Math.ceil(books.length / visibleCount) - 1;
-    let nextIndex = currentIndex + 1 > maxIndex ? 0 : currentIndex + 1;
-    goToSlide(nextIndex);
-  }, 5000);
-
-  function resetAutoSlide() {
-    clearInterval(autoSlideInterval);
-    autoSlideInterval = setInterval(() => {
-      let maxIndex = Math.ceil(books.length / visibleCount) - 1;
-      let nextIndex = currentIndex + 1 > maxIndex ? 0 : currentIndex + 1;
-      goToSlide(nextIndex);
-    }, 5000);
-  }
-
-  goToSlide(0);
+document.querySelector('.popup-close').addEventListener('click', ()=>{ 
+  document.getElementById('bookPopup').classList.remove('active'); 
+});
+  
+// Run functions
+window.addEventListener('load', () => {
+	calculateVisibleCount();
+	goToPage(0);
+});
 </script>
 
 </body>
 </html>
-

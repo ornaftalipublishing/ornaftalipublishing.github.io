@@ -468,7 +468,7 @@ body.no-scroll {
       <h2 id="popupTitle"></h2>
       <p id="popupAuthor"></p>
       <p id="popupDesc"></p>
-      <button id="popupOrder">Order Now</button>
+      <button id="popupOrder" onclick="window.open('https://forms.gle/roJco3KGnRB55QyB7', '_blank')">Order Now</button>
     </div>
   </div>
 </div>
@@ -496,7 +496,7 @@ body.no-scroll {
   { "title": "שיעור כללי מאת ר׳ יוסף אייכנשטיין"},
   { "title": "ספר ר׳ פלוני vol. 1", "image2":"anothername.jpg"},
   { "title": "ספר ר׳ פלוני vol. 2", "author":"ר׳ פלוני", "description":"From someone everybody knows, a very nice sefer!"},
-  { "title": "ספר ר׳ פלוני vol. 3", "author":"ר׳ פלוני", "comming soon":true},
+  { "title": "ספר ר׳ פלוני vol. 3", "author":"ר׳ פלוני", "coming soon":true},
   { "title": "ספר ר׳ פלוני vol. 4"},
   { "title": "ספר ר׳ פלוני vol. 5"},
   { "title": "ספר ר׳ פלוני vol. 6"},
@@ -516,36 +516,31 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const dotsContainer = document.getElementById('dotsContainer');
 
-let tileWidth = () => document.querySelector("div.book").offsetWidth + 20 + 20;
+let tileWidth = function(){
+	let book = document.querySelector("div.book")
+	return book ? book.offsetWidth ? book.offsetWidth + 20 + 20 : 0 : 0;	
+}
 let visibleCount = 0; //Math.floor(track.offsetWidth / tileWidth());
 let currentIndex = 0;
 
 // Load Data
-showcaseData.forEach(book => {
+
+const promises = showcaseData.map(book => getBookImages(book));
+Promise.all(promises).then(results => {
+  results.forEach((images, i) => {
+    const book = showcaseData[i];
+    createBookDiv(book, images);
+  });
+});
+
+function createBookDiv(book, images){
 	const div = document.createElement('div');
 	div.className = 'book';
-	//div.style.minWidth = tileWidth + 'px';
 
 	const img = document.createElement('img');
 	img.alt = book.title;
 	img.draggable = false;
-
-	// Encode title so spaces/Unicode work in the URL
-	const folder = encodeURIComponent(book.title.trim());
-	const primarySrc = `res/showcase/${folder}/cover.png`;
-	const fallbackSrc = `res/showcase/default/cover.png`;
-
-	let fallbackUsed = false;
-	
-	img.addEventListener('error', function() {
-		if (!fallbackUsed) {
-			fallbackUsed = true;
-			console.warn("Image missing, using fallback for", img.alt);
-			img.src = fallbackSrc; // change to fallback
-		}
-	});
-	
-	img.src = primarySrc;
+	img.src = images[0];
 
 	const titleDiv = document.createElement('div');
 	titleDiv.className = 'book-title';
@@ -560,7 +555,69 @@ showcaseData.forEach(book => {
 	});
 
 	track.appendChild(div);
-});
+	
+	calculateVisibleCount();
+	goToPage(0);
+}
+
+/*showcaseData.forEach(book => {
+	console.log("book book");
+	(async () => {
+	
+	const images = await getBookImages(book);
+	/*try {
+	
+	console.log("more book?");
+		
+    } catch(e) {
+	  console.error(e);
+    }*
+	const div = document.createElement('div');
+	div.className = 'book';
+	//div.style.minWidth = tileWidth + 'px';
+
+	const img = document.createElement('img');
+	img.alt = book.title;
+	img.draggable = false;
+
+	// Encode title so spaces/Unicode work in the URL
+	
+	
+	
+	//const folder = encodeURIComponent(book.title.trim());
+	//const primarySrc = `res/showcase/${folder}/cover.png`;
+	//const fallbackSrc = `res/showcase/default/cover.png`;
+
+	/*let fallbackUsed = false;
+	
+	img.addEventListener('error', function() {
+		if (!fallbackUsed) {
+			fallbackUsed = true;
+			console.warn("Image missing, using fallback for", img.alt);
+			img.src = fallbackSrc; // change to fallback
+		}
+	});*
+	img.src = images[0];
+	//img.src = primarySrc;
+
+	const titleDiv = document.createElement('div');
+	titleDiv.className = 'book-title';
+	titleDiv.textContent = book.title;
+
+	div.appendChild(img);
+	div.appendChild(titleDiv);
+
+	// Popup on click
+	div.addEventListener('click', () => {
+		openBookPopup(book);
+	});
+
+	track.appendChild(div);
+	
+	calculateVisibleCount();
+	goToPage(0);
+})();
+});*/
 
 // Popup
 function checkImage(src) {
@@ -573,10 +630,11 @@ function checkImage(src) {
 }
 
 async function getBookImages(book) {
+	console.log("book book 1");
   const defaultCover = 'res/showcase/default/cover.png';
   const defaultComingSoon = 'res/showcase/default/coming_soon.png';
 
-  const coverSrc = book.comingsoon
+  const coverSrc = book["coming soon"]
     ? defaultComingSoon
     : (book.image1 || `res/showcase/${book.title}/cover.png`);
   const contentsSrc = book.image2 ? `res/showcase/${book.title}/${book.image2}` : `res/showcase/${book.title}/contents.png`;
@@ -585,26 +643,10 @@ async function getBookImages(book) {
   const cover = await checkImage(coverSrc) || defaultCover;
   const contents = await checkImage(contentsSrc);
   const content = await checkImage(contentSrc);
-
+	console.log("book book 2");
   return [cover, contents, content].filter(Boolean); // remove nulls
 }
 
-/*function getBookImages(book) {
-  const defaultCover = 'res/showcase/default/cover.png';
-  const defaultComingSoon = 'res/showcase/default/coming_soon.png';
-
-  // Cover (always present)
-  const cover = book.comingsoon
-    ? defaultComingSoon
-    : (book.image1 || `res/showcase/${book.title}/cover.png`);
-
-  // Contents (optional)  
-  const contents = book.image2 ? `res/showcase/${book.title}/${book.image2}` : `res/showcase/${book.title}/contents.png`;
-  const content = book.image3 ? `res/showcase/${book.title}/${book.image3}` : `res/showcase/${book.title}/content.png`;
-
-  // Return all three, later code handles errors/display
-  return [cover, contents, content];
-}*/
 function openBookPopup(book) {
   const popup = document.getElementById('bookPopup');
   const mainImg = document.getElementById('popupMainImg');

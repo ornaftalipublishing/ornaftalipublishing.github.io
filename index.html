@@ -27,10 +27,12 @@
     font-size: 3em;
     margin: 0.3em 0;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
-    margin-top: clamp(0px, 10vw - 1em, 15vh - 1em);
+	margin-top: calc(15vh - 1em);
+    /*margin-top: clamp(0px, 10vw - 1em, 15vh - 1em);*/
   }
   .hero p {
-    font-size: clamp(12px, 5vw, 1.3em);
+    /*font-size: clamp(12px, 5vw, 1.3em);*/
+	font-size: clamp(16px, 5vw, 2em);
     max-width: 600px;
     margin: 1em 0.5em 1.5em;
 	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
@@ -435,7 +437,7 @@ body.no-scroll {
 <!-- Hero -->
 <header class="hero">
   <h1>מכון אור נפתלי</h1>
-  <p>Have your Sefer typed up in 10 days, at your doorstep in 17, do it the cheapest way with מכון אור נפתלי!</br>They will charge you $850 - we will charge you $50</br>They will have it done in a couple of months - we will have it done in 20 days.</br></br>Why bother with all the headaches, just take 1 headache and be over with it</p>
+  <p>ספרים<br><br>Fast - Cheap - Easy</p>
   <button onclick="window.open('https://forms.gle/roJco3KGnRB55QyB7', '_blank')">Apply Now</button>
   <div class="scroll-down">&#x25BC;</div>
 </header>
@@ -479,7 +481,7 @@ body.no-scroll {
     <img class="left" src="res/qrcode.png" alt="QR Code">
     <div class="footer-text">
       <h3>About Us</h3>
-      <p>We type and print your Sefer fast, cheap, and hassle-free - typed in 10 days, at your door in 17.</p>
+      <p>We are a בין הזמנים website.</p>
       <h3>Contact</h3>
       <p>Email: ornaftalipublishing@gmail.com</p>
     </div>
@@ -492,15 +494,8 @@ body.no-scroll {
 <!-- Embedded Showcase JSON -->
 <script id="showcaseData" type="application/json">
 [
-  { "title": "תולדות יעקב יוסף"},
-  { "title": "שיעור כללי מאת ר׳ יוסף אייכנשטיין"},
-  { "title": "ספר ר׳ פלוני vol. 1", "image2":"anothername.jpg"},
-  { "title": "ספר ר׳ פלוני vol. 2", "author":"ר׳ פלוני", "description":"From someone everybody knows, a very nice sefer!"},
-  { "title": "ספר ר׳ פלוני vol. 3", "author":"ר׳ פלוני", "coming soon":true},
-  { "title": "ספר ר׳ פלוני vol. 4"},
-  { "title": "ספר ר׳ פלוני vol. 5"},
-  { "title": "ספר ר׳ פלוני vol. 6"},
-  { "title": "ספר ר׳ פלוני vol. 7"}
+  { "title": "תולדות יעקב יוסף", "description":"", "author":""},
+  { "title": "שיעור כללי מאת ר׳ יוסף אייכנשטיין", "description":"", "coming soon":true}
 ]
 </script>
 
